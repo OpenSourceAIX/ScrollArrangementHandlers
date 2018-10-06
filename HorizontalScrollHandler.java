@@ -36,105 +36,106 @@ public class HorizontalScrollHandler extends AndroidNonvisibleComponent implemen
 
     private ComponentContainer container;
     private static final String LOG_TAG = "HorizontalScrollHandler";
-    
-    private int oldScrollX=0;
 
-    private boolean userControl=true;
-    private boolean scrollBarEnabled=true;
-    private boolean fadingEdgeEnabled=true;
-    private int overScrollMode=View.OVER_SCROLL_IF_CONTENT_SCROLLS;
+    private int oldScrollX = 0;
 
-    private HorizontalScrollView scrollView=null;
-    
+    private boolean userControl = true;
+    private boolean scrollBarEnabled = true;
+    private boolean fadingEdgeEnabled = true;
+    private int overScrollMode = View.OVER_SCROLL_IF_CONTENT_SCROLLS;
+
+    private HorizontalScrollView scrollView = null;
+
     public HorizontalScrollHandler(ComponentContainer container) {
         super(container.$form());
         this.container = container;
-        Log.d(LOG_TAG, LOG_TAG+" Created" );
+        Log.d(LOG_TAG, LOG_TAG + " Created" );
     }
-    
+
     /**
      * <p>
      * greater than 1 usually, making the px numbers smaller than dx numbers.
      * which means a px contains to more than one dx
      * </p>
-     * e.g. on my P9 plus, once i got 3 from this, and width of an button in px is 30, and dx is 90.
+     * e.g. If the density is 3, an button in px is 30, and dx will be 90.
      */
-    private float deviceDensity(){
+    private float deviceDensity() {
         return container.$form().deviceDensity();
     }
     /**
      * px (appinventor unit) to dx (android unit)
     */
-    private int px2dx(int px){
+    private int px2dx(int px) {
         return Math.round(px * deviceDensity());
     }
     /**
      * dx (android unit) to px (appinventor unit)
      */
-    private int dx2px(int dx){
+    private int dx2px(int dx) {
         return Math.round(dx / deviceDensity());
     }
-    private float dx2px(float dx){
+    private float dx2px(float dx) {
         return dx / deviceDensity();
     }
 
-    
+
     @SimpleFunction
-    public void RegisterScrollView(HorizontalScrollArrangement horizontalScrollArrangement){
-        scrollView=(HorizontalScrollView)horizontalScrollArrangement.getView();
-        scrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
-            @Override
-            public void onScrollChanged(){
-                onScroll();
-            }
-        });
+    public void RegisterScrollView(HorizontalScrollArrangement horizontalScrollArrangement) {
+        scrollView = (HorizontalScrollView) horizontalScrollArrangement.getView();
+        scrollView.getViewTreeObserver().addOnScrollChangedListener(
+            new ViewTreeObserver.OnScrollChangedListener() {
+                @Override
+                public void onScrollChanged() {
+                    onScroll();
+                }
+            });
         scrollView.setOnTouchListener(new View.OnTouchListener() {
-            private boolean touchDownDetected=false;
-            private int touchDownScrollX=0;
+            private boolean touchDownDetected = false;
+            private int touchDownScrollX = 0;
             private int touchDownPointerId;
             private float touchDownPointerX;
             @Override
-            public boolean onTouch(View v, MotionEvent event){
-                int action=event.getActionMasked();
-                if(action==MotionEvent.ACTION_DOWN){
+            public boolean onTouch(View v, MotionEvent event) {
+                int action = event.getActionMasked();
+                if (action == MotionEvent.ACTION_DOWN) {
                     onTouchDown(event);
-                }else if(action==MotionEvent.ACTION_MOVE){
-                    if(onMove(event)){
+                }else if (action == MotionEvent.ACTION_MOVE) {
+                    if (onMove(event)) {
                         return true;
                     }
-                }else if(action==MotionEvent.ACTION_UP || action==MotionEvent.ACTION_CANCEL){
+                }else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
                     onTouchUp(event);
                 }
                 return !UserControl(); // => (UserControl()?false:true);
             }
-            private void onTouchDown(MotionEvent event){
+            private void onTouchDown(MotionEvent event) {
                 TouchDown();
-                touchDownDetected=true;
-                touchDownScrollX=dx2px(scrollView.getScrollX());
-                touchDownPointerId=dx2px(event.getPointerId(0));
-                touchDownPointerX=dx2px(event.getX(0));
+                touchDownDetected = true;
+                touchDownScrollX = dx2px(scrollView.getScrollX());
+                touchDownPointerId = dx2px(event.getPointerId(0));
+                touchDownPointerX = dx2px(event.getX(0));
             }
-            private boolean onMove(MotionEvent event){
-                if(touchDownDetected==true){
-                    int currentScrollX=dx2px(scrollView.getScrollX());
-                    float currentPointerX=dx2px(event.getX(event.findPointerIndex(touchDownPointerId)));
+            private boolean onMove(MotionEvent event) {
+                if (touchDownDetected == true) {
+                    int currentScrollX = dx2px(scrollView.getScrollX());
+                    float currentPointerX = dx2px(event.getX(event.findPointerIndex(touchDownPointerId)));
 
-                    if(touchDownScrollX<=0 && currentScrollX<=0){
-                        return OverScrollRight(currentPointerX-touchDownPointerX);
+                    if (touchDownScrollX <= 0 && currentScrollX <= 0) {
+                        return OverScrollRight(currentPointerX - touchDownPointerX);
                     }
-                    int max=MaxScrollPosition();
-                    if(touchDownScrollX>=(max) && currentScrollX>=(max)){
-                        return OverScrollLeft(touchDownPointerX-currentPointerX);
+                    int max = MaxScrollPosition();
+                    if (touchDownScrollX >= max && currentScrollX >= max) {
+                        return OverScrollLeft(touchDownPointerX - currentPointerX);
                     }
-                }else{
+                } else {
                     onTouchDown(event);
                     return onMove(event);
                 }
                 return false;
             }
-            private void onTouchUp(MotionEvent event){
+            private void onTouchUp(MotionEvent event) {
                 TouchUp();
-                touchDownDetected=false;
+                touchDownDetected = false;
             }
         });
         OverScrollMode(OverScrollMode());
@@ -143,53 +144,53 @@ public class HorizontalScrollHandler extends AndroidNonvisibleComponent implemen
     }
 
     @SimpleEvent
-    public void ReachLeftEnd(){
+    public void ReachLeftEnd() {
         EventDispatcher.dispatchEvent(this, "ReachLeftEnd");
     }
     @SimpleEvent
-    public void ReachRightEnd(){
+    public void ReachRightEnd() {
         EventDispatcher.dispatchEvent(this, "ReachRightEnd");
     }
     @SimpleEvent
-    public void ScrollChanged(int scrollX){
+    public void ScrollChanged(int scrollX) {
         EventDispatcher.dispatchEvent(this, "ScrollChanged", scrollX);
-        if(scrollX==0){
+        if (scrollX == 0) {
             ReachLeftEnd();
-        }else{
-            if(MaxScrollPosition()-ScrollPosition()<=0){
+        } else {
+            if (MaxScrollPosition()-ScrollPosition()<=0) {
                 ReachRightEnd();
             }
         }
     }
-    public void onScroll(){
-        int scrollX=dx2px(scrollView.getScrollX());
-        if(scrollX<0){
-            scrollX=0;
+    public void onScroll() {
+        int scrollX = dx2px(scrollView.getScrollX());
+        if (scrollX < 0) {
+            scrollX = 0;
         }
-        if(oldScrollX!=scrollX){
+        if (oldScrollX != scrollX) {
             ScrollChanged(scrollX);
-            oldScrollX=scrollX;
+            oldScrollX = scrollX;
         }
     }
     @SimpleEvent
-    public void TouchDown(){
+    public void TouchDown() {
         EventDispatcher.dispatchEvent(this, "TouchDown");
     }
     @SimpleEvent
-    public void TouchUp(){
+    public void TouchUp() {
         EventDispatcher.dispatchEvent(this, "TouchUp");
     }
 
     @SimpleEvent
-    public boolean OverScrollRight(float displacement){
-        if(displacement>0){
+    public boolean OverScrollRight(float displacement) {
+        if (displacement > 0) {
             return EventDispatcher.dispatchEvent(this, "OverScrollRight", displacement);
         }
         return false;
     }
     @SimpleEvent
-    public boolean OverScrollLeft(float displacement){
-        if(displacement>0){
+    public boolean OverScrollLeft(float displacement) {
+        if (displacement > 0) {
             return EventDispatcher.dispatchEvent(this, "OverScrollLeft", displacement);
         }
         return false;
@@ -197,24 +198,24 @@ public class HorizontalScrollHandler extends AndroidNonvisibleComponent implemen
 
 
     @SimpleProperty
-    public boolean UserControl(){
+    public boolean UserControl() {
         return userControl;
     }
     @SimpleProperty
     @DesignerProperty(editorType = PropertyTypeConstants.PROPERTY_TYPE_BOOLEAN, defaultValue = "True")
-    public void UserControl(boolean enable){
-        userControl=enable;
+    public void UserControl(boolean enable) {
+        userControl = enable;
     }
-    
+
     @SimpleProperty(category = PropertyCategory.APPEARANCE)
     public boolean ScrollBarEnabled() {
         return scrollBarEnabled;
     }
     @SimpleProperty
     @DesignerProperty(editorType = PropertyTypeConstants.PROPERTY_TYPE_BOOLEAN, defaultValue = "True")
-    public void ScrollBarEnabled(boolean enabled){
-        this.scrollBarEnabled=enabled;
-        if(scrollView!=null){
+    public void ScrollBarEnabled(boolean enabled) {
+        this.scrollBarEnabled = enabled;
+        if (scrollView != null) {
             ((HorizontalScrollView)scrollView).setHorizontalScrollBarEnabled(enabled);
         }
     }
@@ -225,10 +226,10 @@ public class HorizontalScrollHandler extends AndroidNonvisibleComponent implemen
     }
     @SimpleProperty
     @DesignerProperty(editorType = PropertyTypeConstants.PROPERTY_TYPE_BOOLEAN, defaultValue = "True")
-    public void FadingEdgeEnabled(boolean enabled){
-        this.fadingEdgeEnabled=enabled;
-        if(scrollView!=null){
-            ((HorizontalScrollView)scrollView).setHorizontalFadingEdgeEnabled(enabled);
+    public void FadingEdgeEnabled(boolean enabled) {
+        this.fadingEdgeEnabled = enabled;
+        if (scrollView != null) {
+            ((HorizontalScrollView) scrollView).setHorizontalFadingEdgeEnabled(enabled);
         }
     }
 
@@ -236,22 +237,23 @@ public class HorizontalScrollHandler extends AndroidNonvisibleComponent implemen
     public int OverScrollMode() {
         return overScrollMode;
     }    
-    @SimpleProperty(description = "Can be:\n "+
-            View.OVER_SCROLL_ALWAYS+": ALWAYS\n"+
-            View.OVER_SCROLL_IF_CONTENT_SCROLLS+": OVER SCROLL IF CONTENT SCROLLS\n"+
-            View.OVER_SCROLL_NEVER+": NEVER")
+    @SimpleProperty(description = "Can be:\n " +
+            View.OVER_SCROLL_ALWAYS + ": ALWAYS\n" +
+            View.OVER_SCROLL_IF_CONTENT_SCROLLS + ": OVER SCROLL IF CONTENT SCROLLS\n" +
+            View.OVER_SCROLL_NEVER + ": NEVER")
     @DesignerProperty(editorType = PropertyTypeConstants.PROPERTY_TYPE_NON_NEGATIVE_INTEGER, defaultValue = "1")
-    public void OverScrollMode(int mode){
-        if(mode!=View.OVER_SCROLL_ALWAYS && mode!=View.OVER_SCROLL_IF_CONTENT_SCROLLS && mode!=View.OVER_SCROLL_NEVER){
-            mode=View.OVER_SCROLL_IF_CONTENT_SCROLLS;
+    public void OverScrollMode(int mode) {
+        if (mode != View.OVER_SCROLL_ALWAYS && mode != View.OVER_SCROLL_IF_CONTENT_SCROLLS &&
+                mode != View.OVER_SCROLL_NEVER) {
+            mode = View.OVER_SCROLL_IF_CONTENT_SCROLLS;
         }
-        this.overScrollMode=mode;
+        this.overScrollMode = mode;
     }
 
     @SimpleProperty(category = PropertyCategory.APPEARANCE, 
         description = "The scroll position is the same as the number of pixels that "
-            + "are hidden from view above the scrollable area. "
-            + "If the scroll bar is at the very left, or if the element is not scrollable, this number will be 0.")
+                    + "are hidden from view above the scrollable area. "
+                    + "If the scroll bar is at the very left, or if the element is not scrollable, this number will be 0.")
     public int ScrollPosition() {
         int dxPosition = dx2px(scrollView.getScrollX());
         if (dxPosition < 0) {
@@ -261,7 +263,7 @@ public class HorizontalScrollHandler extends AndroidNonvisibleComponent implemen
         }
         return dxPosition;
     }
-    
+
     @SimpleProperty(category = PropertyCategory.APPEARANCE, 
         description = "Return the maximum position that the ScrollArrangement can reach")
     public int MaxScrollPosition() {
@@ -269,79 +271,102 @@ public class HorizontalScrollHandler extends AndroidNonvisibleComponent implemen
         return dx2px(view.getRight() - scrollView.getWidth());
     }
 
-    // go top or go bottom
+    /**
+     * Go to the left end
+     */
     @SimpleFunction
     public void ScrollLeftEnd() {
-        if(scrollView==null){
+        if (scrollView == null) {
             return;
         }
         scrollView.fullScroll(HorizontalScrollView.FOCUS_LEFT);
     }
+
+    /**
+     * Go to the right end
+     */
     @SimpleFunction
     public void ScrollRightEnd() {
-        if(scrollView==null){
+        if (scrollView == null) {
             return;
         }
         scrollView.fullScroll(HorizontalScrollView.FOCUS_RIGHT);
     }
-    // arrow scroll (in the test it looks like half screen scrolling)
+
+    /**
+     * Scroll left for half screen
+     */
     @SimpleFunction
     public void ArrowScrollLeftward() {
-        if(scrollView==null){
+        if (scrollView == null) {
             return;
         }
         scrollView.arrowScroll(HorizontalScrollView.FOCUS_LEFT);
     }
+
+    /**
+     * Scroll left for half screen
+     */
     @SimpleFunction
     public void ArrowScrollRightward() {
-        if(scrollView==null){
+        if (scrollView == null) {
             return;
         }
         scrollView.arrowScroll(HorizontalScrollView.FOCUS_RIGHT);
     }
-    // pageScroll up and down (for one page each)
+
+    /*
+     * Scroll left for one page
+     */
     @SimpleFunction
     public void PageScrollLeftward() {
-        if(scrollView==null){
+        if (scrollView == null) {
             return;
         }
         scrollView.pageScroll(HorizontalScrollView.FOCUS_LEFT);
     }
+
+    /*
+     * Scroll right for one page
+     */
     @SimpleFunction
     public void PageScrollRightward() {
-        if(scrollView==null){
+        if (scrollView == null) {
             return;
         }
         scrollView.pageScroll(HorizontalScrollView.FOCUS_RIGHT);
     }
-    // scroll to
+
+    /**
+     * Scroll to a specific location
+     */
     @SimpleFunction
     public void ScrollTo(int px) {
-        if(scrollView==null){
+        if (scrollView == null) {
             return;
         }
         scrollView.scrollTo(px2dx(px), 0);
     }
-    // scroll by
+
     @SimpleFunction
     public void ScrollBy(int px) {
-        if(scrollView==null){
+        if (scrollView == null) {
             return;
         }
         scrollView.scrollBy(px2dx(px), 0);
     }
-    // smooth scroll to
+
     @SimpleFunction
     public void SmoothScrollTo(int px) {
-        if(scrollView==null){
+        if (scrollView == null) {
             return;
         }
         scrollView.smoothScrollTo(px2dx(px), 0);
     }
-    // smooth scroll by
+
     @SimpleFunction
     public void SmoothScrollBy(int px) {
-        if(scrollView==null){
+        if (scrollView == null) {
             return;
         }
         scrollView.smoothScrollBy(px2dx(px), 0);
