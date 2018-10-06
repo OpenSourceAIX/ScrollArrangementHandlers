@@ -15,7 +15,6 @@ import com.google.appinventor.components.runtime.ComponentContainer;
 import com.google.appinventor.components.runtime.EventDispatcher;
 import com.google.appinventor.components.runtime.HorizontalScrollArrangement;
 
-import android.content.Context;
 import android.util.Log;
 
 import android.view.View;
@@ -27,7 +26,7 @@ import android.widget.HorizontalScrollView;
     description = "by ColinTree at http://aix.colintree.cn/",
     category = ComponentCategory.EXTENSION,
     nonVisible = true,
-    iconName = "data:img/jpg;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAIVSURBVDhPlVNNj9JQFD1tIahTAgOhCQGRDkNilCGu3LkwMez8Cbp25z/wl7hxLxuWbIiGEHZkArivxBYQkJShTKAf9t52Oo07T3J7X1/POe+811aAj26361H/X7RaLUEgsXf5FfA8eK4D13OD7lfQ7agHc0F3HRup+UeI5BQRQrFHPSrfOOz+JbynwEFoNiA3Ft6JY2N/EAi4x41YHxr45KAoXhg1NOJUofDe0O/xBLQv6/c5TO0JdloVNzMVe/1xZHJYqLCMp7idP8Pt4jlOZonFhARdaFXHeInXr97wJGE8HmN784VNFOktrl5chU+Ab9+7cNOfeRxtQX50jmKxGFU+n4dji3BticfxZ/JZnsUENrh48IFv/kU99w4XmfdYrVZwHIfn+v0+TNPE5cNPEEUxMDiTatjtdjgej0wirNdr7P+k8OP6FxMNw8BisWBeuVyG/nPvJ3eDM6ATrlQq6HQ6LBYEAZlMhuMSiQSapuF0OkFVVSSTSTZiLn2J1WoVkiQFkWJF4tFohFqtxmQSZbNZHA4HbDYb2LYdvkY/AZHvarlcotfr8X4pDW2NVp3NZphMJmyuKAqnZgNC3GAwGECWZTQaDaTTaTYhs0KhgFKphOFwiFQqxVuKDAgkptOmmPP5nIuIuq6j2WyyOJfLoV6vYzqdYrvdgn/ndrsdftn3oMhEoFUpsmVZvAAhkUjwmSmKgr/4UX5IUCJy/wAAAABJRU5ErkJggg==")
+    iconName = "aiwebres/iconH.png")
 
 @SimpleObject(external = true)
 
@@ -36,7 +35,6 @@ public class HorizontalScrollHandler extends AndroidNonvisibleComponent implemen
     public static final int VERSION = 3;
 
     private ComponentContainer container;
-    private Context context;
     private static final String LOG_TAG = "HorizontalScrollHandler";
     
     private int oldScrollX=0;
@@ -51,7 +49,6 @@ public class HorizontalScrollHandler extends AndroidNonvisibleComponent implemen
     public HorizontalScrollHandler(ComponentContainer container) {
         super(container.$form());
         this.container = container;
-        context = (Context) container.$context();
         Log.d(LOG_TAG, LOG_TAG+" Created" );
     }
     

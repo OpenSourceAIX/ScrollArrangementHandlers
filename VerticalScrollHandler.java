@@ -15,7 +15,6 @@ import com.google.appinventor.components.runtime.ComponentContainer;
 import com.google.appinventor.components.runtime.EventDispatcher;
 import com.google.appinventor.components.runtime.VerticalScrollArrangement;
 
-import android.content.Context;
 import android.util.Log;
 
 import android.view.View;
@@ -27,7 +26,7 @@ import android.widget.ScrollView;
     description = "by ColinTree at http://aix.colintree.cn/",
     category = ComponentCategory.EXTENSION,
     nonVisible = true,
-    iconName = "data:img/jpg;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAHvSURBVDhPjVLNjtJQFL4U7CgKzLT8TogkRkYlIZo4wsIFG3kAwwO4cu/Cl/ARTNj4APAAMA9gYDATWRg2DlISrKa06MDwc3uv3+0tkNn5pTk55/T7zv3uaQOc83a7Tf4P1Wo10Gq1crmcrANbLNjl5eojcyljLmPUSyhn9ODnO0VSAfAURTFNs9Pp/BgsleGb5eD1yk4SzghhBE44By20YweDQQgmk0mtVlNVFU3kZ+cXoYjHFTIBcYKcLYFSsrcQVPEQMR7YC3ZRvpDwRjM8yFBilrAE0g6xWAxr0HUdfcuyiLIKkrsLM3tH+8VCpm3b/h0AKSgWi9PpdEGNwe9PRF3eCv+dfX+ZOXyxubLC2pTG4/st7QAZom+du4m4jr2fPDhV188SicQNAQz3+/3RaETW+uPD90fXb6l9Qtx78/kcU5LJZDQaFZbEzbaYzWZYq9TX63VOnt6+f4wmym+Dr1/O++IESWUekHhkstlsDMM4fV7WNC2VSvV6PTX9uVKp+ALJBlCu12tESmmhUOh2u/h8KK/mDg8PkPhbklQgk8k0Go1IJIKck6WeXTiWgxOeFB6tqIHm/tLQuK6bTqdLpVL2ofLn6MNGa5rja1hCP64dB6xXjuOI37vZbPqimxgOh4jlcnk8HsNhPp9XVfUf2I8aUMHpkW8AAAAASUVORK5CYII=")
+    iconName = "aiwebres/iconV.png")
 
 @SimpleObject(external = true)
 
@@ -36,7 +35,6 @@ public class VerticalScrollHandler extends AndroidNonvisibleComponent implements
     public static final int VERSION = 3;
 
     private ComponentContainer container;
-    private Context context;
     private static final String LOG_TAG = "VerticalScrollHandler";
     
     private int oldScrollY=0;
@@ -51,7 +49,6 @@ public class VerticalScrollHandler extends AndroidNonvisibleComponent implements
     public VerticalScrollHandler(ComponentContainer container) {
         super(container.$form());
         this.container = container;
-        context = (Context) container.$context();
         Log.d(LOG_TAG, LOG_TAG+" Created" );
     }
     
